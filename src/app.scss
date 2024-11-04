@@ -1,0 +1,105 @@
+// global styles
+
+button.gridcard {
+  height: 100%;
+  width: 100%;
+  box-shadow: var(--pico-card-box-shadow);
+  color: unset;
+  padding: unset;
+
+  &:hover {
+    opacity: 90%;
+  }
+}
+
+@mixin dark-mode {
+  button.gridcard {
+    background-color: #33618f;
+    border: 1px solid #4f7ba8;
+
+    &:hover {
+      background-color: #13171f;
+      border: 1px solid #6390be;
+    }
+
+    header {
+      border-bottom: 1px solid #4f7ba8;
+    }
+  }
+
+  nav {
+    border-bottom: 1px solid #434a52;
+  }
+
+  table {
+    border: 1px solid #434a52;
+  }
+
+  header {
+    border-bottom: 1px solid #262c32;
+  }
+
+  aside {
+    border-right: 1px solid #262c32;
+
+    nav {
+      border-bottom: none;
+    }
+  }
+}
+
+@mixin light-mode {
+  button.gridcard {
+    background-color: #cee0fe;
+    border: 1px solid #b6c4e0;
+
+    &:hover {
+      background-color: #eff1f4;
+      border: 1px solid #8ea0c4;
+    }
+
+    header {
+      border-bottom: 1px solid #b6c4e0;
+    }
+  }
+
+  nav {
+    border-bottom: 1px solid #cecfd1;
+  }
+
+  table {
+    border: 1px solid #cecfd1;
+  }
+
+  header {
+    border-bottom: 1px solid #cecfd1;
+  }
+
+  aside {
+    border-right: 1px solid #cecfd1;
+
+    nav {
+      border-bottom: none;
+    }
+  }
+}
+
+@media only screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include dark-mode;
+  }
+}
+
+[data-theme="dark"] {
+  @include dark-mode;
+}
+
+@media only screen and (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    @include light-mode;
+  }
+}
+
+[data-theme="light"] {
+  @include light-mode;
+}

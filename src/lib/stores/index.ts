@@ -1,4 +1,5 @@
-import { useWritable } from "./use-shared-store";
+import type { Writable } from "svelte/store";
+import { useWritable, usePreferences } from "./use-shared-store";
 
 export const useLoading = () => useWritable("loading", false);
 
@@ -16,4 +17,6 @@ export type SessionState = {
 };
 
 export const useSession = () =>
-  useWritable<SessionState | null>("session", null);
+  usePreferences<SessionState | null>("session", null);
+
+export type SessionType = Writable<SessionState | null>;

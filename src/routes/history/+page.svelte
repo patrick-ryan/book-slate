@@ -1,14 +1,17 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
-  export let data: PageData;
   import { ActiveTable } from "active-table";
   import { onMount } from "svelte";
   import _ from "lodash";
+  import { authenticateAndLoadGapi } from "$lib/clients/gapi";
+  import { useSession } from "$lib/stores";
 
   let sheetData: any[][];
+  let session = useSession();
 
   async function onSubmit() {
     const spreadsheetId = "18YrQby4F2onmSDnkjRK8jelGlGQP6oj0sGx71Dtq63U";
+
+    await authenticateAndLoadGapi(session, true);
 
     let response;
     try {
@@ -188,3 +191,9 @@
     />
   {/if}
 </main>
+
+<style lang="scss">
+  main {
+    padding: 2rem;
+  }
+</style>

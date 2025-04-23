@@ -16,6 +16,7 @@
   import { RingLoader } from "svelte-loading-spinners";
   import Toast from "$lib/components/toast.svelte";
   import { onMount } from "svelte";
+  import LoginButton from "$lib/components/login-button.svelte";
 
   // initialize stores
   let pageLoading = useLoading();
@@ -26,30 +27,7 @@
   // while being offline, or where no refresh token exists)
   let loggedIn = false;
 
-  // supabase.auth.onAuthStateChange((event, session) => {
-  //   // listen to events like sign-in or sign-out, if a
-  //   // session exists then the user is logged in
-  //   loggedIn = Boolean(session);
-  //   if (!loggedIn && $page.url.pathname != "/login") {
-  //     goto("/login", { invalidateAll: true });
-  //   } else if (loggedIn && $page.url.pathname == "/login") {
-  //     goto("/");
-  //   }
-  // });
-
   let loading = false;
-
-  // async function handleSignout() {
-  //   loading = true;
-  //   const {
-  //     data: { session },
-  //   } = await supabase.auth.getSession();
-  //   if (session) {
-  //     await supabase.auth.signOut();
-  //   }
-  //   loading = false;
-  //   goto("/login", { invalidateAll: true });
-  // }
 
   let mobileNavShow = false;
   let currentScreenSize: number; // px
@@ -65,39 +43,47 @@
 
   $: isLoading = $navigating || $pageLoading;
 
+  let isGapiReady = false;
+  let isGsiReady = false;
 </script>
 
 <svelte:window bind:innerWidth={currentScreenSize} />
+
+<svelte:head>
+  <script
+    async
+    defer
+    src="https://accounts.google.com/gsi/client"
+    on:load={() => (isGsiReady = true)}
+  ></script>
+  <script
+    async
+    defer
+    src="https://apis.google.com/js/api.js"
+    on:load={() => (isGapiReady = true)}
+  ></script>
+</svelte:head>
 
 <Toast />
 
 <div id="main">
   <nav>
     <ul>
-      <li
-        class:nav-selected={$page.url.pathname.startsWith("/reading-list")}
-      >
-        <a
-          href="/reading-list"
-          on:click={() => (mobileNavShow = false)}
+      <li class:nav-selected={$page.url.pathname.startsWith("/reading-list")}>
+        <a href="/reading-list" on:click={() => (mobileNavShow = false)}
           >Reading List</a
         >
       </li>
-      <li
-        class:nav-selected={$page.url.pathname.startsWith("/history")}
-      >
-        <a
-          href="/history"
-          on:click={() => (mobileNavShow = false)}
-          >History</a
-        >
+      <li class:nav-selected={$page.url.pathname.startsWith("/history")}>
+        <a href="/history" on:click={() => (mobileNavShow = false)}>History</a>
       </li>
     </ul>
+    {#if isGapiReady && isGsiReady}
+      <LoginButton></LoginButton>
+    {/if}
   </nav>
   <slot />
 </div>
 
 <style lang="scss">
-
 </style>
- 

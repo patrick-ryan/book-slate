@@ -24,14 +24,11 @@ async function initializeGapi() {
   gapiInitialized = true;
 }
 
-async function setSession(
+async function createSession(
   tokenResponse: google.accounts.oauth2.TokenResponse,
   session: SessionType
 ) {
-  if (tokenResponse.error) {
-    console.log("Token fetch failure");
-    session.set(null);
-  } else {
+  if (tokenResponse && tokenResponse.access_token) {
     console.log("Setting session");
     const profile = await fetch(
       "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -49,6 +46,13 @@ async function setSession(
       },
       loggedIn: true,
     });
+
+    return true;
+  } else {
+    console.log("Token fetch failure");
+    session.set(null);
+
+    return false;
   }
 }
 
@@ -57,7 +61,7 @@ async function initTokenClient(session: SessionType) {
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: gapiConfig.clientId,
     scope: gapiConfig.scope,
-    callback: async (tokenResponse) => setSession(tokenResponse, session),
+    callback: async (tokenResponse) => createSession(tokenResponse, session),
   });
 }
 
@@ -68,9 +72,9 @@ async function getAccessTokenAsync(session: SessionType) {
       client_id: gapiConfig.clientId,
       scope: gapiConfig.scope,
       callback: async (tokenResponse) => {
-        if (tokenResponse && tokenResponse.access_token) {
-          await setSession(tokenResponse, session);
-          resolve(tokenResponse.access_token);
+        let success = await createSession(tokenResponse, session);
+        if (success) {
+          resolve(null);
         } else {
           reject(new Error("Failed to get access token"));
         }

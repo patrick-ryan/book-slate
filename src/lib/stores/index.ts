@@ -16,6 +16,14 @@ export type SessionState = {
   loggedIn?: boolean;
 };
 
+export const useTheme = () =>
+  usePreferences("theme", {
+    preference: "system",
+    current: window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light",
+  });
+
 export const useSession = () =>
   usePreferences<SessionState | null>("session", null);
 

@@ -60,7 +60,7 @@ async function initTokenClient(session: SessionType) {
   console.log("Initializing token client");
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: gapiConfig.clientId,
-    scope: gapiConfig.scope,
+    scope: gapiConfig.scope.join(" "),
     callback: async (tokenResponse) => createSession(tokenResponse, session),
   });
 }
@@ -70,7 +70,7 @@ async function getAccessTokenAsync(session: SessionType) {
   return new Promise((resolve, reject) => {
     let tempClient = google.accounts.oauth2.initTokenClient({
       client_id: gapiConfig.clientId,
-      scope: gapiConfig.scope,
+      scope: gapiConfig.scope.join(" "),
       callback: async (tokenResponse) => {
         let success = await createSession(tokenResponse, session);
         if (success) {

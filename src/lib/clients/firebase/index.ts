@@ -36,8 +36,12 @@ const DISCOVERY_DOC =
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
-
+const SCOPES = [
+  "https://www.googleapis.com/auth/userinfo.email",
+  "https://www.googleapis.com/auth/userinfo.profile",
+  "https://www.googleapis.com/auth/spreadsheets.readonly",
+  "https://www.googleapis.com/auth/drive.file",
+];
 export const gapiConfig = {
   apiKey: firebaseConfig.apiKey,
   clientId:

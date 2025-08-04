@@ -5,19 +5,20 @@
   import { authenticateAndLoadGapi } from "$lib/clients/gapi";
   import { useSession } from "$lib/stores";
 
+  const SPREADSHEET_ID = "18YrQby4F2onmSDnkjRK8jelGlGQP6oj0sGx71Dtq63U";
   let sheetData: any[][];
   let session = useSession();
 
-  async function onSubmit() {
-    const spreadsheetId = "18YrQby4F2onmSDnkjRK8jelGlGQP6oj0sGx71Dtq63U";
+  let isDataLoaded = false;
 
+  async function onGetData() {
     await authenticateAndLoadGapi(session, true);
 
     let response;
     try {
       // Fetch first 10 files
       response = await gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: spreadsheetId,
+        spreadsheetId: SPREADSHEET_ID,
         range: "reading_list!1:20",
       });
     } catch (err: any) {
@@ -46,6 +47,7 @@
     ];
 
     sheetData = updatedData;
+    isDataLoaded = true;
   }
 
   let tableStyle = {};
@@ -130,20 +132,41 @@
 
   let tableElementRef: ActiveTable;
 
-  $: if (tableElementRef) {
-    tableElementRef.onDataUpdate = (dataUpdate) => {
-      console.log(dataUpdate);
-    };
-  }
+  // $: if (tableElementRef) {
+  //   tableElementRef.onDataUpdate = async (dataUpdate) => {
+  //     if (isDataLoaded) {
+  //       console.log("Submitting update");
+  //       await gapi.client.sheets.spreadsheets.values.update({
+  //         spreadsheetId: SPREADSHEET_ID,
+  //         range: "reading_list!1:20",
+  //         valueInputOption: "RAW",
+  //         resource: {
+  //           values: dataUpdate,
+  //         },
+  //       });
+  //     }
+  //   };
+  // }
 
-  $: if (sheetData) {
-    console.log(sheetData);
+  async function saveData() {
+    if (isDataLoaded) {
+      await gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: "reading_list!1:20",
+        valueInputOption: "RAW",
+        resource: {
+          values: sheetData,
+        },
+      });
+    } else {
+      console.log("data not loaded, skipping save");
+    }
   }
 </script>
 
 <main>
   <div>
-    <button id="submit" on:click={onSubmit}>Get Data</button>
+    <button on:click={onGetData}>Get Data</button>
   </div>
 
   <table id="dummy" style="display: none">
@@ -189,6 +212,9 @@
         ],
       }}
     />
+    <div>
+      <button on:click={saveData}>Save Data</button>
+    </div>
   {/if}
 </main>
 

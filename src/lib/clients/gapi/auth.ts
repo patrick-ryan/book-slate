@@ -4,6 +4,16 @@ import { gapiConfig } from "./config";
 let tokenClient: google.accounts.oauth2.TokenClient;
 let gapiInitialized = false;
 
+export async function initialize(session: SessionType) {
+  if (!gapiInitialized) {
+    await initializeGapi();
+  }
+
+  if (!tokenClient) {
+    await initTokenClient(session);
+  }
+}
+
 async function initializeGapi() {
   // Load the GAPI client library
   await new Promise((resolve, reject) => {
@@ -84,13 +94,7 @@ export async function authenticateAndLoadGapi(
   session: SessionType,
   wait: boolean
 ) {
-  if (!gapiInitialized) {
-    await initializeGapi();
-  }
-
-  if (!tokenClient) {
-    await initTokenClient(session);
-  }
+  await initialize(session);
 
   const tokenInfo = gapi.client.getToken();
   const isTokenValid =

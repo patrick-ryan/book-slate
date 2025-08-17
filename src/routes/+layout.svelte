@@ -2,9 +2,10 @@
   import "../app.scss";
   import "@picocss/pico";
   import _ from "lodash";
+  import { RefreshCwIcon } from "lucide-svelte";
 
   import { onMount } from "svelte";
-  import { invalidate } from "$app/navigation";
+  import { goto, invalidate } from "$app/navigation";
   import { page } from "$app/stores";
 
   import Toast from "$lib/components/toast.svelte";
@@ -63,6 +64,11 @@
       >
         <a href="/private/history">History</a>
       </li>
+      <li>
+        <button on:click={() => goto("/private/refresh")}
+          ><RefreshCwIcon size="20"></RefreshCwIcon></button
+        >
+      </li>
     </ul>
     {#if user}
       <LoggedInCard
@@ -82,5 +88,9 @@
     align-items: center;
 
     --pico-block-spacing-vertical: 0;
+
+    li.nav-selected {
+      background-color: var(--pico-mark-background-color);
+    }
   }
 </style>

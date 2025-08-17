@@ -26,8 +26,10 @@ export async function uploadFile(
   if (error) {
     // Handle error
     console.log(error);
+    return false;
   } else {
     // Handle success
     console.log("file upload success");
+    return true;
   }
 }

@@ -1,3 +1,1 @@
-import { authenticateAndLoadGapi } from "./auth";
-
-export { authenticateAndLoadGapi };
+export { authenticateAndLoadGapi, initialize } from "./auth";

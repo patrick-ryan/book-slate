@@ -8,9 +8,9 @@ export const load: PageServerLoad = async ({
 
   const { data, error } = await supabase.storage
     .from("assets")
-    .download("data/reading_list.json");
+    .download("data/history.json");
 
-  const reading_list = JSON.parse((await data?.text()) ?? "");
+  const history = JSON.parse((await data?.text()) ?? "");
 
-  return { rows: reading_list };
+  return { rows: history };
 };

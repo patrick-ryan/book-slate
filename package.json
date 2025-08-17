@@ -48,7 +48,6 @@
 		"@types/gapi.client.sheets-v4": "^0.0.4",
 		"@types/google.accounts": "^0.0.15",
 		"active-table": "^1.1.5",
-		"firebase": "^11.1.0",
 		"lodash": "^4.17.21",
 		"lucide-svelte": "^0.378.0",
 		"sass": "^1.69.0",

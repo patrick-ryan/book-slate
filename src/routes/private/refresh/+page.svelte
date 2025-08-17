@@ -1,17 +1,11 @@
 <script lang="ts">
-  import { authenticateAndLoadGapi } from "$lib/clients/gapi";
   import { uploadFile } from "$lib/clients/supabase";
-  import { useSession } from "$lib/stores";
-
-  let session = useSession();
 
   const SPREADSHEET_ID = "18YrQby4F2onmSDnkjRK8jelGlGQP6oj0sGx71Dtq63U";
   export let data;
   let { supabase } = data;
 
   async function onRefresh() {
-    await authenticateAndLoadGapi(session, true);
-
     let response;
     try {
       // Fetch first 10 files

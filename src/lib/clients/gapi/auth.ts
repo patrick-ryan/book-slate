@@ -1,5 +1,5 @@
-import { gapiConfig } from "$lib/clients/firebase";
 import { type SessionType } from "$lib/stores";
+import { gapiConfig } from "./config";
 
 let tokenClient: google.accounts.oauth2.TokenClient;
 let gapiInitialized = false;

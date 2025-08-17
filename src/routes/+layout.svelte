@@ -71,9 +71,7 @@
         userDetail={user.email + " / " + user.user_metadata.email_verified}
       ></LoggedInCard>
     {/if}
-    {#if isGapiReady && isGsiReady}
-      <LoginButton></LoginButton>
-    {/if}
+    <LoginButton></LoginButton>
   </nav>
   <slot />
 </div>

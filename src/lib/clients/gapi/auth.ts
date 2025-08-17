@@ -6,7 +6,6 @@ let gapiInitialized = false;
 
 async function initializeGapi() {
   // Load the GAPI client library
-  console.log("Loading GAPI client");
   await new Promise((resolve, reject) => {
     gapi.load("client", {
       callback: resolve,
@@ -15,7 +14,6 @@ async function initializeGapi() {
   });
 
   // Initialize the GAPI client
-  console.log("Initializing GAPI client");
   await gapi.client.init({
     apiKey: gapiConfig.apiKey,
     discoveryDocs: gapiConfig.discoveryDocs,
@@ -29,7 +27,6 @@ async function createSession(
   session: SessionType
 ) {
   if (tokenResponse && tokenResponse.access_token) {
-    console.log("Setting session");
     const profile = await fetch(
       "https://www.googleapis.com/oauth2/v3/userinfo",
       {
@@ -49,7 +46,7 @@ async function createSession(
 
     return true;
   } else {
-    console.log("Token fetch failure");
+    console.log(tokenResponse.error_description);
     session.set(null);
 
     return false;
@@ -57,7 +54,6 @@ async function createSession(
 }
 
 async function initTokenClient(session: SessionType) {
-  console.log("Initializing token client");
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: gapiConfig.clientId,
     scope: gapiConfig.scope.join(" "),
@@ -66,7 +62,6 @@ async function initTokenClient(session: SessionType) {
 }
 
 async function getAccessTokenAsync(session: SessionType) {
-  console.log("Waiting for token");
   return new Promise((resolve, reject) => {
     let tempClient = google.accounts.oauth2.initTokenClient({
       client_id: gapiConfig.clientId,
@@ -102,10 +97,8 @@ export async function authenticateAndLoadGapi(
     tokenInfo && Date.now() + Number(tokenInfo.expires_in) * 1000 > Date.now();
 
   if (isTokenValid) {
-    console.log("Token still valid");
   } else {
     // Request an access token
-    console.log("Requesting access token");
     if (wait) {
       await getAccessTokenAsync(session);
     } else {

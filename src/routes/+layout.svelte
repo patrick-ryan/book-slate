@@ -1,50 +1,32 @@
 <script lang="ts">
-  import { BROWSER } from "esm-env";
-
   import "../app.scss";
   import "@picocss/pico";
   import _ from "lodash";
 
-  import { goto } from "$app/navigation";
-  import { navigating, page } from "$app/stores";
-
-  import { useLoading } from "$lib/stores";
-
-  // import {
-  //   supabase,
-  // } from "$lib/clients/supabase";
-  import { RingLoader } from "svelte-loading-spinners";
-  import Toast from "$lib/components/toast.svelte";
   import { onMount } from "svelte";
+  import { invalidate } from "$app/navigation";
+  import { page } from "$app/stores";
+
+  import Toast from "$lib/components/toast.svelte";
   import LoginButton from "$lib/components/login-button.svelte";
+  import LoggedInCard from "$lib/components/logged-in-card.svelte";
 
-  // initialize stores
-  let pageLoading = useLoading();
+  export let data;
+  let { session, supabase, user } = data;
 
-  // TODO: this should use a store, if any of the page load functions
-  // runs and does not have a session, it should set the store value to
-  // false before redirecting to /login (supports session expiration
-  // while being offline, or where no refresh token exists)
-  let loggedIn = false;
-
-  let loading = false;
-
-  let mobileNavShow = false;
   let currentScreenSize: number; // px
-  let mobileScreenSize = 576; // px
-  $: mobileView = currentScreenSize <= mobileScreenSize;
-  $: if (!mobileView) {
-    // reset if for some reason the screen gets bigger and then
-    // smaller again
-    mobileNavShow = false;
-  }
-
-  $: navHidden = !loggedIn || (mobileView && !mobileNavShow);
-
-  $: isLoading = $navigating || $pageLoading;
-
   let isGapiReady = false;
   let isGsiReady = false;
+
+  onMount(() => {
+    const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+      if (newSession?.expires_at !== session?.expires_at) {
+        invalidate("supabase:auth");
+      }
+    });
+
+    return () => data.subscription.unsubscribe();
+  });
 </script>
 
 <svelte:window bind:innerWidth={currentScreenSize} />
@@ -69,15 +51,26 @@
 <div id="main">
   <nav>
     <ul>
-      <li class:nav-selected={$page.url.pathname.startsWith("/reading-list")}>
-        <a href="/reading-list" on:click={() => (mobileNavShow = false)}
-          >Reading List</a
-        >
+      <li
+        class:nav-selected={$page.url.pathname.startsWith(
+          "/private/reading-list"
+        )}
+      >
+        <a href="/private/reading-list">Reading List</a>
       </li>
-      <li class:nav-selected={$page.url.pathname.startsWith("/history")}>
-        <a href="/history" on:click={() => (mobileNavShow = false)}>History</a>
+      <li
+        class:nav-selected={$page.url.pathname.startsWith("/private/history")}
+      >
+        <a href="/private/history">History</a>
       </li>
     </ul>
+    {#if user}
+      <LoggedInCard
+        provider="Supabase"
+        userName={user.email ?? ""}
+        userDetail={user.email + " / " + user.user_metadata.email_verified}
+      ></LoggedInCard>
+    {/if}
     {#if isGapiReady && isGsiReady}
       <LoginButton></LoginButton>
     {/if}
@@ -86,4 +79,10 @@
 </div>
 
 <style lang="scss">
+  #main > nav {
+    display: flex;
+    align-items: center;
+
+    --pico-block-spacing-vertical: 0;
+  }
 </style>

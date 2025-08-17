@@ -16,8 +16,6 @@
   let { session, supabase, user } = data;
 
   let currentScreenSize: number; // px
-  let isGapiReady = false;
-  let isGsiReady = false;
 
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
@@ -33,18 +31,8 @@
 <svelte:window bind:innerWidth={currentScreenSize} />
 
 <svelte:head>
-  <script
-    async
-    defer
-    src="https://accounts.google.com/gsi/client"
-    on:load={() => (isGsiReady = true)}
-  ></script>
-  <script
-    async
-    defer
-    src="https://apis.google.com/js/api.js"
-    on:load={() => (isGapiReady = true)}
-  ></script>
+  <script async defer src="https://accounts.google.com/gsi/client"></script>
+  <script async defer src="https://apis.google.com/js/api.js"></script>
 </svelte:head>
 
 <Toast />

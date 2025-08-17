@@ -1,7 +1,7 @@
 <script lang="ts">
   import _ from "lodash";
 
-  export let data;
+  export let data: { rows: string[][] };
   let { rows } = data;
 </script>
 
